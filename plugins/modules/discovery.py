@@ -25,13 +25,36 @@ extends_documentation_fragment: [tribe29.checkmk.common]
 options:
     host_name:
         description: The host who's services you want to manage.
-        required: true
         type: str
     state:
         description: The action to perform during discovery.
         type: str
         default: new
         choices: [new, remove, fix_all, refresh, only_host_labels]
+    host_names:
+        description: A list of host names for bulk discovery.
+        type: list
+        elements: str
+        default: []
+    mode:
+        description: The mode of the discovery.
+        type: str
+        default: single
+        choices: [single, bulk]
+    do_full_scan:
+        description:
+            - Whether to perform a full scan of the host or work with cached data.
+        type: bool
+        default: True
+    ignore_errors:
+        description:
+            - Whether to ignore error in single check plugins during discovery.
+        type: bool
+        default: True
+    bulk_size:
+        description: How many host to discover in one batch.
+        type: int
+        default: 10
 
 author:
     - Robin Gierse (@robin-tribe29)
@@ -55,6 +78,18 @@ EXAMPLES = r"""
     automation_secret: "$SECRET"
     host_name: "my_host"
     state: "fix_all"
+- name: "Bulk discover several hosts."
+  tribe29.checkmk.discovery:
+    server_url: "http://localhost/"
+    site: "my_site"
+    automation_user: "automation"
+    automation_secret: "$SECRET"
+    mode: 'bulk'
+    host_names:
+      - "my_host1"
+      - "my_host2"
+      - "my_host3"
+    state: "new"
 """
 
 RETURN = r"""
@@ -82,7 +117,16 @@ def run_module():
         site=dict(type="str", required=True),
         automation_user=dict(type="str", required=True),
         automation_secret=dict(type="str", required=True, no_log=True),
-        host_name=dict(type="str", required=True),
+        host_name=dict(type="str"),
+        host_names=dict(type="list", elements="str", default=[]),
+        mode=dict(
+            type="str",
+            default="single",
+            choices=["single", "bulk"],
+        ),
+        do_full_scan=dict(type="bool", default=True),
+        ignore_errors=dict(type="bool", default=True),
+        bulk_size=dict(type="int", default=10),
         state=dict(
             type="str",
             default="new",
@@ -120,21 +164,33 @@ def run_module():
         ),
     }
 
-    params = {
-        "mode": module.params.get("state", ""),
-    }
-
     base_url = "%s/%s/check_mk/api/1.0" % (
         module.params.get("server_url", ""),
         module.params.get("site", ""),
     )
 
-    api_endpoint = (
-        "/objects/host/"
-        + module.params.get("host_name")
-        + "/actions/discover_services/invoke"
-    )
+    # ToDo: Should we choose the mode based on the input of host_name and host_names?
+    if module.params.get("mode") == "single":
+        api_endpoint = (
+            "/objects/host/"
+            + module.params.get("host_name")
+            + "/actions/discover_services/invoke"
+        )
+        params = {
+           "mode": module.params.get("state", ""),
+        }
+    elif module.params.get("mode") == "bulk":
+        api_endpoint = "/domain-types/discovery_run/actions/bulk-discovery-start/invoke"
+        params = {
+           "mode": module.params.get("state", ""),
+           "hostnames": module.params.get("host_names", ""),
+           "do_full_scan": module.params.get("do_full_scan", ""),
+           "bulk_size": module.params.get("bulk_size", ""),
+           "ignore_errors": module.params.get("ignore_errors", ""),
+        }
+
     url = base_url + api_endpoint
+
     response, info = fetch_url(
         module, url, module.jsonify(params), headers=headers, method="POST"
     )

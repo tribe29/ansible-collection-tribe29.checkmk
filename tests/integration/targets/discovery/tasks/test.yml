@@ -15,7 +15,7 @@
   run_once: 'yes'
   loop: "{{ checkmk_hosts }}"
 
-- name: "Discover hosts."
+- name: "Discover hosts - single mode."
   discovery:
     server_url: "{{ server_url }}"
     site: "{{ site }}"
@@ -38,6 +38,18 @@
       - "{{ site }}"
   delegate_to: localhost
   run_once: 'true'
+
+- name: "Discover hosts - bulk mode."
+  discovery:
+    server_url: "{{ server_url }}"
+    site: "{{ site }}"
+    automation_user: "{{ automation_user }}"
+    automation_secret: "{{ automation_secret }}"
+    mode: 'bulk'
+    host_names: "{{ checkmk_hosts }}"
+    state: "fix_all"
+  delegate_to: localhost
+  run_once: 'yes'
 
 - name: "Delete hosts."
   host:

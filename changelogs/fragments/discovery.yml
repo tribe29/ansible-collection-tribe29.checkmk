@@ -1,0 +1,45 @@
+# https://docs.ansible.com/ansible/latest/community/development_process.html#changelogs-how-to
+minor_changes:
+  - Add ability to perform bulk discoveries to discovery module.
+
+known_issues:
+  - The bulk discovery only works with Checkmk 2.1 as the API endpoint was not available before that release.
+
+## Line Format
+# When writing a changelog entry, use the following format:
+
+# - scope - description starting with a lowercase letter and ending with a period at the very end. Multiple sentences are allowed (https://github.com/reference/to/an/issue or, if there is no issue, reference to a pull request itself).
+
+# The scope is usually a module or plugin name or group of modules or plugins, for example, lookup plugins. While module names can (and should) be mentioned directly (foo_module), plugin names should always be followed by the type (foo inventory plugin).
+
+# For changes that are not really scoped (for example, which affect a whole collection), use the following format:
+
+# - Description starting with an uppercase letter and ending with a dot at the very end. Multiple sentences are allowed (https://github.com/reference/to/an/issue or, if there is no issue, reference to a pull request itself).
+
+
+## Possible keys:
+
+# breaking_changes
+
+#     Changes that break existing playbooks or roles. This includes any change to existing behavior that forces users to update tasks. Displayed in both the changelogs and the Porting Guides.
+# major_changes
+
+#     Major changes to Ansible itself. Generally does not include module or plugin changes. Displayed in both the changelogs and the Porting Guides.
+# minor_changes
+
+#     Minor changes to Ansible, modules, or plugins. This includes new features, new parameters added to modules, or behavior changes to existing parameters.
+# deprecated_features
+
+#     Features that have been deprecated and are scheduled for removal in a future release. Displayed in both the changelogs and the Porting Guides.
+# removed_features
+
+#     Features that were previously deprecated and are now removed. Displayed in both the changelogs and the Porting Guides.
+# security_fixes
+
+#     Fixes that address CVEs or resolve security concerns. Include links to CVE information.
+# bugfixes
+
+#     Fixes that resolve issues.
+# known_issues
+
+#     Known issues that are currently not fixed or will not be fixed.

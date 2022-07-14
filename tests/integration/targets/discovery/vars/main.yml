@@ -1,6 +1,8 @@
 ---
-checkmk_version: "2.0.0p23"
-download_url: "https://download.checkmk.com/checkmk/{{ checkmk_version }}/check-mk-raw-{{ checkmk_version }}_0.bionic_amd64.deb"
+checkmk_version: "2.1.0p3"
+# ToDo: We need 2.1 for the bulk discovery feature
+# checkmk_version: "2.0.0p26"
+download_url: "https://download.checkmk.com/checkmk/{{ checkmk_version }}/check-mk-raw-{{ checkmk_version }}_0.focal_amd64.deb"
 site: "test"
 server_url: "http://127.0.0.1/"
 automation_user: "cmkadmin"
@@ -10,10 +12,10 @@ checkmk_hosts:
   - name: test1.tld
     folder: "/"
   - name: test2.tld
-    folder: "/" 
+    folder: "/"
   - name: test3.tld
     folder: "/"
   - name: test4.tld
-    folder: "/" 
+    folder: "/"
   - name: test5.tld
-    folder: "/" 
+    folder: "/"
