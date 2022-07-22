@@ -46,7 +46,7 @@
   args:
     executable: /bin/bash
     removes: "/omd/sites/{{ item.name }}"
-  # no_log: true
+  no_log: true
   loop: "{{ checkmk_server_sites }}"
   when: item.state == "absent"
   register: checkmk_server_sites_removed
